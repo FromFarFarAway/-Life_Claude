@@ -1,0 +1,106 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-background: #0a0a0f;
+  --color-foreground: #e2e8f0;
+  --color-card: #12121e;
+  --color-card-elevated: #1a1a2e;
+  --color-card-border: #2a2a45;
+  --color-muted: #94a3b8;
+  --color-ldl: #ef4444;
+  --color-tc: #8b5cf6;
+  --color-hdl: #22c55e;
+  --color-tg: #f59e0b;
+  --color-non-hdl: #f97316;
+  --color-ai: #3b82f6;
+  --color-ai-indigo: #6366f1;
+  --font-sans: "Inter", "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "SF Mono", "Fira Code", "Fira Mono", "Roboto Mono", monospace;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #2a2a45 transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #2a2a45;
+  border-radius: 3px;
+}
+
+html {
+  scroll-behavior: smooth;
+  color-scheme: dark;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Focus visible styles for keyboard navigation */
+:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Atmospheric background */
+.bg-atmospheric {
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(59, 130, 246, 0.08), transparent),
+    radial-gradient(ellipse 60% 40% at 80% 50%, rgba(99, 102, 241, 0.05), transparent),
+    var(--color-background);
+}
+
+/* Brand aura glow */
+.brand-aura {
+  background: radial-gradient(
+    ellipse 200px 100px at center,
+    rgba(59, 130, 246, 0.15),
+    rgba(99, 102, 241, 0.08),
+    rgba(6, 182, 212, 0.04),
+    transparent
+  );
+}
+
+/* Glow effects */
+.glow-blue {
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.15), 0 0 60px rgba(59, 130, 246, 0.05);
+}
+
+.glow-indigo {
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.15), 0 0 60px rgba(99, 102, 241, 0.05);
+}
+
+/* Score ring glow */
+.score-ring-glow {
+  filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.4)) drop-shadow(0 0 20px rgba(99, 102, 241, 0.2));
+}
+
+/* Scroll offset for sticky nav */
+[id] {
+  scroll-margin-top: 140px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
