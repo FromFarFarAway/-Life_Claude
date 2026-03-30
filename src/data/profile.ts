@@ -3,6 +3,10 @@ export const userProfile = {
   sex: 'Male' as const,
   birthDate: '1988-12-07',
   age: 37,
+  fitnessAge: 33,
+  smoking: 'Never smoked' as const,
+  hookah: 'Once every 3 months' as const,
+  residence: 'Russia / Kazakhstan' as const,
   dataWindow: 'Bloodwork 2020\u20132025 \u00b7 Imaging 2021\u20132025',
   dominantSignal: 'Persistent LDL-driven hypercholesterolemia',
 };

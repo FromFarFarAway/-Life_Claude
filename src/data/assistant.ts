@@ -40,7 +40,22 @@ export const suggestedQuestions: AssistantQA[] = [
     answer:
       'Two sections have very low coverage:\n\n\u2022 Cancer Screening (10% coverage, score 34) \u2014 Almost no dedicated screening evidence exists in your uploaded files. Recommended next steps include age-appropriate screenings.\n\u2022 Cognitive & Longevity (5% coverage, score 31) \u2014 No cognitive assessments (PHQ/GAD), sleep device data, or longevity biomarkers are available.\n\nAdditionally, Thyroid & Hormonal has only 40% coverage based on a single TSH and free T4 measurement, and Immune Health has 30% coverage due to missing CRP and limited immune markers beyond CBC.\n\nThese sparse sections are shown with coverage meters rather than false precision \u2014 they represent areas where additional data would meaningfully improve your health picture.',
   },
+  {
+    question: 'How can I improve my profile completeness?',
+    answer:
+      'Your Profile Completeness reflects how much data is available to inform your health picture. To improve it:\n\n\u2022 Complete the health questionnaire \u2014 adds lifestyle, family history, and goal context (+15% to completeness).\n\u2022 Add missing critical markers \u2014 ApoB, Lp(a), blood pressure, BMI, waist circumference.\n\u2022 Add ferritin \u2014 completes your iron assessment in the Nutrient & Blood section.\n\u2022 Add CRP \u2014 provides inflammatory context for immune and cardiovascular sections.\n\u2022 Schedule age-appropriate screenings \u2014 cancer screening is currently at 10% coverage.\n\u2022 Connect a wearable device \u2014 sleep, activity, and heart rate data enhance cognitive and longevity sections.\n\nEach data addition improves both completeness and the confidence of your health scores.',
+  },
+  {
+    question: 'What should I focus on based on my goals?',
+    answer:
+      'Your health checklist is prioritized based on your selected goals and current data gaps:\n\n1. Close blind spots first \u2014 ApoB, Lp(a), and blood pressure are the highest-impact missing measurements regardless of your goals.\n2. Address high-priority categories \u2014 Heart health (score 42) needs the most attention given persistent LDL elevation.\n3. Goal-aligned actions \u2014 depending on your selected goals, the coach emphasizes different next steps:\n   \u2022 Heart risk → structured lipid work-up with ApoB\n   \u2022 Longevity → inflammatory markers + cognitive baseline\n   \u2022 Fitness → wearable data + body composition\n   \u2022 Screening → schedule age-appropriate cancer screenings\n\nCheck your Health Coach card for your personalized checklist.',
+  },
+  {
+    question: 'Tell me about my fitness age.',
+    answer:
+      'Your fitness age is estimated at 33, which is 4 years younger than your chronological age of 37. This is a positive signal.\n\nHowever, this estimate is currently based on limited data. To strengthen this assessment, consider:\n\n\u2022 Adding VO2max or cardiorespiratory fitness test results\n\u2022 Connecting a wearable for continuous heart rate and activity tracking\n\u2022 Adding body composition data (BMI, waist circumference, body fat %)\n\u2022 Recording exercise frequency, type, and intensity through the questionnaire\n\nWith more data, the fitness age estimate becomes more reliable and can be tracked over time.',
+  },
 ];
 
 export const fallbackAnswer: string =
-  "Based on your current dashboard data, your primary health signal is persistent LDL-driven hypercholesterolemia with a Health Score of 56/100. The most impactful next steps are adding ApoB and Lp(a) measurements, bringing blood pressure into your record, and repeating a clean fasting lipid panel. Would you like me to explain any specific section in more detail?";
+  "Based on your current dashboard data, your primary health signal is persistent LDL-driven hypercholesterolemia with a Health Score of 56/100. The most impactful next steps are adding ApoB and Lp(a) measurements, bringing blood pressure into your record, and repeating a clean fasting lipid panel. Complete your health questionnaire to get personalized recommendations aligned to your goals.";

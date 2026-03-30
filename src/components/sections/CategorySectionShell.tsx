@@ -1,7 +1,11 @@
+'use client';
+
 import { Card } from '@/components/ui/card';
 import { StateBadge } from '@/components/ui/badge';
 import { CoverageMeter } from '@/components/charts/CoverageMeter';
 import type { CategoryConfig } from '@/data/categories';
+import { useAppState } from '@/lib/context';
+import { goalConfigs } from '@/data/questionnaire';
 
 interface CategorySectionShellProps {
   category: CategoryConfig;
@@ -10,6 +14,14 @@ interface CategorySectionShellProps {
 }
 
 export function CategorySectionShell({ category, summary, children }: CategorySectionShellProps) {
+  const { userGoals } = useAppState();
+
+  // Check if this category is relevant to the user's selected goals
+  const isGoalRelevant = userGoals.some(goalId => {
+    const config = goalConfigs.find(g => g.id === goalId);
+    return config?.relatedCategories.includes(category.id);
+  });
+
   return (
     <section id={category.anchorId} className="scroll-mt-36">
       <Card variant="elevated" className="space-y-4">
@@ -21,6 +33,11 @@ export function CategorySectionShell({ category, summary, children }: CategorySe
               <span className="text-sm text-gray-500">/100</span>
             </div>
             <h3 className="text-lg font-semibold text-white">{category.label}</h3>
+            {isGoalRelevant && (
+              <span className="text-[9px] px-2 py-0.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 uppercase tracking-wider font-medium">
+                Goal-relevant
+              </span>
+            )}
           </div>
           <StateBadge state={category.state} />
         </div>

@@ -3,8 +3,9 @@
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { ScoreRing } from '@/components/ui/score-ring';
-import { SEEDED_OVERALL_SCORE, SEEDED_BLIND_SPOTS_EXPLORED, SEEDED_UNCERTAINTY } from '@/data/categories';
+import { SEEDED_OVERALL_SCORE, SEEDED_UNCERTAINTY } from '@/data/categories';
 import { dashboardCopy } from '@/data/profile';
+import { useAppState } from '@/lib/context';
 import { AboutEstimateModal } from './AboutEstimateModal';
 
 interface IntegralScoreCardProps {
@@ -13,6 +14,7 @@ interface IntegralScoreCardProps {
 
 export function IntegralScoreCard({ onOpenAssistant }: IntegralScoreCardProps) {
   const [showAbout, setShowAbout] = useState(false);
+  const { completeness } = useAppState();
 
   return (
     <>
@@ -47,8 +49,8 @@ export function IntegralScoreCard({ onOpenAssistant }: IntegralScoreCardProps) {
         {/* Sub-metrics */}
         <div className="flex justify-center gap-6 mt-6 pt-4 border-t border-[#2a2a45]">
           <div className="text-center">
-            <span className="text-lg font-bold text-blue-400">{SEEDED_BLIND_SPOTS_EXPLORED}%</span>
-            <p className="text-[10px] uppercase tracking-wider text-gray-500 mt-1">Blind Spots Explored</p>
+            <span className="text-lg font-bold text-blue-400">{completeness.percentage}%</span>
+            <p className="text-[10px] uppercase tracking-wider text-gray-500 mt-1">Profile Completeness</p>
           </div>
           <div className="text-center">
             <span className="text-lg font-bold text-amber-400">{SEEDED_UNCERTAINTY}%</span>

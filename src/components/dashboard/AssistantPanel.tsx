@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { starterMessage, suggestedQuestions, fallbackAnswer, type AssistantMessage } from '@/data/assistant';
+import { useAppState } from '@/lib/context';
 
 interface AssistantPanelProps {
   isOpen: boolean;
@@ -10,6 +11,7 @@ interface AssistantPanelProps {
 }
 
 export function AssistantPanel({ isOpen, onClose, onOpen }: AssistantPanelProps) {
+  const { userGoals, completeness, questionnaireCompleted } = useAppState();
   const [messages, setMessages] = useState<AssistantMessage[]>([starterMessage]);
   const [input, setInput] = useState('');
   const [usedQuestions, setUsedQuestions] = useState<Set<number>>(new Set());
@@ -36,6 +38,35 @@ export function AssistantPanel({ isOpen, onClose, onOpen }: AssistantPanelProps)
     ]);
   };
 
+  const generateContextualResponse = (userMsg: string): string => {
+    const lower = userMsg.toLowerCase();
+
+    // Goal-aware responses
+    if (lower.includes('goal') || lower.includes('priorit')) {
+      if (userGoals.length > 0) {
+        return `Based on your selected goals (${userGoals.map(g => g.replace(/-/g, ' ')).join(', ')}), your top priorities are:\n\n1. Close critical data gaps: ApoB, Lp(a), blood pressure\n2. Address high-priority heart health findings (LDL persistently elevated)\n3. Follow through on goal-specific actions shown in your Health Coach checklist.\n\nYour Profile Completeness is at ${completeness.percentage}%. Improving it will sharpen all recommendations.`;
+      }
+      return 'Complete your health questionnaire first to set goals. This will personalize your dashboard priorities and coaching recommendations.';
+    }
+
+    // Completeness-aware responses
+    if (lower.includes('complete') || lower.includes('profile') || lower.includes('missing')) {
+      return `Your Profile Completeness is ${completeness.percentage}%. Key missing items:\n\n${
+        completeness.missingItems.slice(0, 5).map(item => `\u2022 ${item.label} \u2014 ${item.reason}`).join('\n')
+      }\n\nEach addition improves both completeness and the confidence of your health scores.`;
+    }
+
+    // Questionnaire-aware responses
+    if (lower.includes('questionnaire') || lower.includes('survey')) {
+      if (questionnaireCompleted) {
+        return 'Your health questionnaire is complete. Your responses have been factored into your dashboard priorities and coaching recommendations. You can see the impact in your Profile Completeness score and personalized checklist.';
+      }
+      return 'The health questionnaire helps personalize your dashboard by capturing lifestyle habits, family history, and health goals. Look for the "Complete your profile" prompt in the Health Coach card to get started.';
+    }
+
+    return fallbackAnswer;
+  };
+
   const handleSend = () => {
     if (!input.trim()) return;
     const userMsg = input.trim();
@@ -45,10 +76,12 @@ export function AssistantPanel({ isOpen, onClose, onOpen }: AssistantPanelProps)
       (qa) => userMsg.toLowerCase().includes(qa.question.toLowerCase().slice(0, 20))
     );
 
+    const response = matchedQA?.answer ?? generateContextualResponse(userMsg);
+
     setMessages((prev) => [
       ...prev,
       { role: 'user', content: userMsg },
-      { role: 'assistant', content: matchedQA?.answer ?? fallbackAnswer },
+      { role: 'assistant', content: response },
     ]);
   };
 
@@ -59,7 +92,6 @@ export function AssistantPanel({ isOpen, onClose, onOpen }: AssistantPanelProps)
     }
   };
 
-  // Floating button when closed (mobile or closed state)
   if (!isOpen) {
     return (
       <button

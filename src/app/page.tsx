@@ -17,11 +17,14 @@ import { ImmuneHealthContent } from '@/components/sections/ImmuneHealthContent';
 import { NutrientBloodHealthContent } from '@/components/sections/NutrientBloodHealthContent';
 import { CancerScreeningContent } from '@/components/sections/CancerScreeningContent';
 import { CognitiveLongevityContent } from '@/components/sections/CognitiveLongevityContent';
+import { QuestionnaireFlow } from '@/components/questionnaire/QuestionnaireFlow';
 import { validateScoringIntegrity } from '@/lib/scoring';
+import { useAppState } from '@/lib/context';
 
 export default function Home() {
   const [assistantOpen, setAssistantOpen] = useState(false);
   const [initialized, setInitialized] = useState(false);
+  const { questionnaireOpen, dismissQuestionnaire } = useAppState();
 
   useEffect(() => {
     validateScoringIntegrity();
@@ -88,6 +91,11 @@ export default function Home() {
         onClose={() => setAssistantOpen(false)}
         onOpen={() => setAssistantOpen(true)}
       />
+
+      {/* Questionnaire modal */}
+      {questionnaireOpen && (
+        <QuestionnaireFlow onClose={dismissQuestionnaire} />
+      )}
     </div>
   );
 }
