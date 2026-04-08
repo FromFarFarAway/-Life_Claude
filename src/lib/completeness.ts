@@ -1,6 +1,11 @@
 import { categories } from '@/data/categories';
 import { evidenceEntries } from '@/data/evidence';
 import type { HealthGoal } from '@/data/models';
+import {
+  ouraDaily,
+  garminDaily,
+  oldestPanelStalenessDays,
+} from '@/data/seed/anton';
 
 export interface MissingItem {
   label: string;
@@ -52,8 +57,8 @@ export function calculateProfileCompleteness(
     total += SOURCE_WEIGHTS.imaging;
   }
 
-  // Wearable component — not connected
-  const hasWearable = false;
+  // Wearable component — Ver 3 wires Oura + Garmin daily seed
+  const hasWearable = ouraDaily.length > 0 || garminDaily.length > 0;
   if (hasWearable) {
     total += SOURCE_WEIGHTS.wearable;
   }
@@ -116,13 +121,25 @@ function buildMissingItems(questionnaireCompleted: boolean, userGoals: HealthGoa
     }
   }
 
-  // Wearable data
-  items.push({
-    label: 'Connect a wearable device',
-    category: 'general',
-    impact: 'low',
-    reason: 'Sleep, activity, and heart rate data would enhance cognitive and longevity insights.',
-  });
+  // Wearable data — only show this gap if we don't have any wearable seed
+  if (ouraDaily.length === 0 && garminDaily.length === 0) {
+    items.push({
+      label: 'Connect a wearable device',
+      category: 'general',
+      impact: 'low',
+      reason: 'Sleep, activity, and heart rate data would enhance cognitive and longevity insights.',
+    });
+  }
+
+  // Stale bloodwork — Ver 3 surfaces this as a high-impact gap
+  if (oldestPanelStalenessDays > 180) {
+    items.push({
+      label: `Bloodwork is ${oldestPanelStalenessDays} days old`,
+      category: 'general',
+      impact: 'high',
+      reason: 'At least one panel is past the 6-month freshness window — refresh in P0.',
+    });
+  }
 
   // Goal-specific items
   if (userGoals.includes('mental-wellness')) {

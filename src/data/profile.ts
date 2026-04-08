@@ -24,6 +24,12 @@ export const dashboardCopy = {
   healthCoachBody:
     'The fastest way to improve certainty is to repeat a clean fasting lipid panel, add ApoB and one-time Lp(a), and bring blood pressure / waist / family history into the record.',
 
+  // Ver 3 — brief + reassurance copy used by HealthCoachCard / chat
+  coachBriefShort:
+    'Two things this week — get glucose clarity fast, and start pushing your running + strength block.',
+  coachReassuranceGlucose:
+    "Your own data is reassuring: RHR steady ~50, Oura HRV in baseline band, body temp flat, sleep efficiency 90%+, 2021 lipid panel reassuring, 2021 abdominal US showed a normal pancreas, and your UGT1A1 report carries no diabetes-risk variants. The fasting draw confirms it.",
+
   healthCoachActions: [
     'Repeat a clean fasting lipid panel with ApoB included',
     'Request one-time Lp(a) measurement to rule out genetic risk',

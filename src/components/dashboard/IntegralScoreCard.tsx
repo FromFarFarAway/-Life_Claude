@@ -8,13 +8,9 @@ import { dashboardCopy } from '@/data/profile';
 import { useAppState } from '@/lib/context';
 import { AboutEstimateModal } from './AboutEstimateModal';
 
-interface IntegralScoreCardProps {
-  onOpenAssistant: () => void;
-}
-
-export function IntegralScoreCard({ onOpenAssistant }: IntegralScoreCardProps) {
+export function IntegralScoreCard() {
   const [showAbout, setShowAbout] = useState(false);
-  const { completeness } = useAppState();
+  const { completeness, setCoachModalOpen } = useAppState();
 
   return (
     <>
@@ -60,10 +56,10 @@ export function IntegralScoreCard({ onOpenAssistant }: IntegralScoreCardProps) {
 
         {/* CTA */}
         <button
-          onClick={onOpenAssistant}
+          onClick={() => setCoachModalOpen(true)}
           className="mt-6 w-full rounded-lg bg-indigo-600/20 border border-indigo-500/30 py-3 text-sm font-semibold text-indigo-300 hover:bg-indigo-600/30 transition-colors"
         >
-          Discuss with AI Advisor
+          Open your weekly plan
         </button>
 
         {/* Score helper tooltip */}

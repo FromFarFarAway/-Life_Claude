@@ -2,6 +2,7 @@ import type { DerivedRiskTag, DerivedSegment, CompletenessState, HealthGoal } fr
 import { userProfile } from './profile';
 import { categories } from './categories';
 import { evidenceEntries } from './evidence';
+import { deriveAllSignals } from '@/lib/derivedSignals';
 
 // Primary segment derivation
 export function derivePrimarySegment(
@@ -117,6 +118,48 @@ export function deriveRiskTags(): DerivedRiskTag[] {
       evidenceBasis: `Only ${Math.round(cogLong.coverage * 100)}% coverage`,
       dataSource: 'clinical',
     });
+  }
+
+  // ── Ver 3 ───────────────────────────────────────────────────────────────
+  // Wearable + derived-signal driven tags. Kept additive so 2.3 widgets keep
+  // seeing what they expect.
+  try {
+    const signals = deriveAllSignals();
+
+    if (signals.metabolicWatch.value) {
+      tags.push({
+        id: 'r3-metabolic-watch',
+        categoryId: 'metabolic',
+        tag: 'R3 metabolic watch — sweets up + stale draw',
+        severity: 'moderate',
+        evidenceBasis: signals.metabolicWatch.label,
+        dataSource: 'self-report',
+      });
+    }
+
+    if (signals.liver.value !== 'falling') {
+      tags.push({
+        id: 'r4-liver-active',
+        categoryId: 'liver',
+        tag: 'R4 liver active — UGT1A1 carrier + GGT trend',
+        severity: 'moderate',
+        evidenceBasis: signals.liver.label,
+        dataSource: 'lab',
+      });
+    }
+
+    if (signals.hrvTrend.value <= -5 || signals.sleepPressure.value >= 30) {
+      tags.push({
+        id: 'r10-longevity-sleep',
+        categoryId: 'cognitiveLongevity',
+        tag: 'R10 longevity/cognitive — sleep arm flagged',
+        severity: 'moderate',
+        evidenceBasis: `${signals.hrvTrend.label} · ${signals.sleepPressure.label}`,
+        dataSource: 'wearable',
+      });
+    }
+  } catch {
+    // If derived signals throw for any reason, fall back to the 2.3 tag set.
   }
 
   return tags;

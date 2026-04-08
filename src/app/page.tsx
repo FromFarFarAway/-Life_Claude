@@ -1,13 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { TopNav } from '@/components/layout/TopNav';
 import { IntegralScoreCard } from '@/components/dashboard/IntegralScoreCard';
 import { UserProfileCard } from '@/components/dashboard/UserProfileCard';
 import { MainProblemCard } from '@/components/dashboard/MainProblemCard';
 import { RisksCard } from '@/components/dashboard/RisksCard';
 import { HealthCoachCard } from '@/components/dashboard/HealthCoachCard';
-import { AssistantPanel } from '@/components/dashboard/AssistantPanel';
+import { HealthCoachModal } from '@/components/dashboard/HealthCoachModal';
+import { PlanScopedChat } from '@/components/dashboard/PlanScopedChat';
 import { HeartHealthContent } from '@/components/sections/HeartHealthContent';
 import { LiverHealthContent } from '@/components/sections/LiverHealthContent';
 import { KidneyHealthContent } from '@/components/sections/KidneyHealthContent';
@@ -22,24 +23,11 @@ import { validateScoringIntegrity } from '@/lib/scoring';
 import { useAppState } from '@/lib/context';
 
 export default function Home() {
-  const [assistantOpen, setAssistantOpen] = useState(false);
-  const [initialized, setInitialized] = useState(false);
   const { questionnaireOpen, dismissQuestionnaire } = useAppState();
 
   useEffect(() => {
     validateScoringIntegrity();
-
-    if (!initialized) {
-      const mediaQuery = window.matchMedia('(min-width: 1024px)');
-      const handler = () => {
-        setAssistantOpen(mediaQuery.matches);
-        setInitialized(true);
-      };
-      handler();
-      mediaQuery.addEventListener('change', handler);
-      return () => mediaQuery.removeEventListener('change', handler);
-    }
-  }, [initialized]);
+  }, []);
 
   return (
     <div className="min-h-screen bg-atmospheric">
@@ -50,7 +38,7 @@ export default function Home() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Left: Flagship card */}
           <div className="lg:col-span-5">
-            <IntegralScoreCard onOpenAssistant={() => setAssistantOpen(true)} />
+            <IntegralScoreCard />
           </div>
 
           {/* Right: Supporting cards */}
@@ -61,6 +49,7 @@ export default function Home() {
               <RisksCard />
             </div>
             <HealthCoachCard />
+            <PlanScopedChat />
           </div>
         </div>
 
@@ -85,12 +74,8 @@ export default function Home() {
         </footer>
       </main>
 
-      {/* Assistant panel */}
-      <AssistantPanel
-        isOpen={assistantOpen}
-        onClose={() => setAssistantOpen(false)}
-        onOpen={() => setAssistantOpen(true)}
-      />
+      {/* Health Coach full-plan modal */}
+      <HealthCoachModal />
 
       {/* Questionnaire modal */}
       {questionnaireOpen && (

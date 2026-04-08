@@ -140,3 +140,80 @@ export interface GoalConfig {
   relatedCategories: string[];
   coachEmphasis: string;
 }
+
+// ────────────────────────────────────────────────────────────────────────────
+// Ver 3 — Anton segment + Health Coach plan + scoped chat citations
+// New types are appended; nothing above is modified so 2.3 widgets keep
+// compiling unchanged.
+// ────────────────────────────────────────────────────────────────────────────
+
+export type PriorityCode = 'P0' | 'P1' | 'P2' | 'P3' | 'P4';
+export type StatusDot = 'red' | 'amber' | 'green';
+
+export interface EvidenceMetricRef {
+  id: string;
+  label: string;
+  current: string;
+  baseline?: string;
+  source: 'oura' | 'garmin' | 'lab' | 'toggl' | 'self-report';
+}
+
+export interface EvidenceStudyRef {
+  id: string;
+  label: string;
+  date: string;
+  vaultAnchor: string;
+}
+
+export interface CoachActionDetail {
+  code: PriorityCode;
+  title: string;
+  whyParagraph: string;
+  reassurance?: string;
+  steps: string[];
+  parallelHabits?: string[];
+  verification: string;
+  evidence: {
+    metrics: EvidenceMetricRef[];
+    studies: EvidenceStudyRef[];
+  };
+}
+
+export interface CoachPriority {
+  code: PriorityCode;
+  title: string;
+  statusDot: StatusDot;
+  whyLine: string;
+  action: CoachActionDetail;
+}
+
+export interface CoachPlan {
+  brief: string;
+  priorities: CoachPriority[];
+  gaps: string[];
+  generatedAt: string;
+}
+
+// Ver 3 segmentation (L/R/B/D/M) — extends but doesn't replace DerivedSegment
+export interface AntonSegment {
+  L: string[]; // life stage e.g. ['L2']
+  R: string[]; // risk clusters e.g. ['R3-watch','R4-active','R10-active']
+  B: string[]; // behavior tags e.g. ['B3','B5','B6']
+  D: string[]; // data profile e.g. ['D3','D4-partial']
+  M: string[]; // motivation tags e.g. ['M1','M3','M6']
+}
+
+// Plan-scoped chat
+export type CitationKind = 'metric' | 'study' | 'plan-action';
+
+export interface Citation {
+  kind: CitationKind;
+  id: string;
+  label: string;
+}
+
+export interface CoachMessage {
+  role: 'user' | 'assistant';
+  content: string;
+  citations: Citation[];
+}

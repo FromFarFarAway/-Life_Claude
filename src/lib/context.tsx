@@ -1,9 +1,11 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, useRef, useCallback, type ReactNode } from 'react';
-import type { HealthGoal, ChecklistItem } from '@/data/models';
+import { createContext, useContext, useState, useEffect, useRef, useCallback, useMemo, type ReactNode } from 'react';
+import type { HealthGoal, ChecklistItem, CoachPlan, AntonSegment } from '@/data/models';
 import { calculateProfileCompleteness, type CompletenessResult } from './completeness';
 import { getTopChecklistItems } from './checklist';
+import { buildCoachPlan } from './coachPlan';
+import { deriveAntonSegment } from './segmentation';
 
 interface QuestionnaireAnswers {
   [questionId: string]: string | string[] | number | boolean | null;
@@ -17,6 +19,14 @@ interface AppState {
   completeness: CompletenessResult;
   checklist: ChecklistItem[];
   questionnaireOpen: boolean;
+  // Ver 3 ────────────────────────────────────────────────────────────────
+  coachPlan: CoachPlan;
+  antonSegment: AntonSegment;
+  coachModalOpen: boolean;
+  setCoachModalOpen: (open: boolean) => void;
+  chatComposerPrefill: string;
+  setChatComposerPrefill: (text: string) => void;
+  // ──────────────────────────────────────────────────────────────────────
   completeQuestionnaire: (answers: QuestionnaireAnswers) => void;
   dismissQuestionnaire: () => void;
   setQuestionnaireOpen: (open: boolean) => void;
@@ -61,6 +71,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [questionnaireAnswers, setQuestionnaireAnswers] = useState<QuestionnaireAnswers>(persisted?.questionnaireAnswers ?? {});
   const [userGoals, setUserGoalsState] = useState<HealthGoal[]>(persisted?.userGoals ?? []);
   const [questionnaireOpen, setQuestionnaireOpen] = useState(false);
+  const [coachModalOpen, setCoachModalOpen] = useState(false);
+  const [chatComposerPrefill, setChatComposerPrefill] = useState('');
   // Persist on changes
   const isFirstRender = useRef(true);
   useEffect(() => {
@@ -73,6 +85,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const completeness = calculateProfileCompleteness(questionnaireCompleted, userGoals);
   const checklist = getTopChecklistItems(userGoals, questionnaireCompleted, 7);
+
+  // Ver 3 — derived once per provider mount; the seed is static so memoizing
+  // on [] keeps the brief card and modal in sync without thrashing.
+  const coachPlan = useMemo(() => buildCoachPlan(), []);
+  const antonSegment = useMemo(() => deriveAntonSegment(), []);
 
   const completeQuestionnaire = useCallback((answers: QuestionnaireAnswers) => {
     setQuestionnaireAnswers(answers);
@@ -105,6 +122,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
         completeness,
         checklist,
         questionnaireOpen,
+        coachPlan,
+        antonSegment,
+        coachModalOpen,
+        setCoachModalOpen,
+        chatComposerPrefill,
+        setChatComposerPrefill,
         completeQuestionnaire,
         dismissQuestionnaire,
         setQuestionnaireOpen,
